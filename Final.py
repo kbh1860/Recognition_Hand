@@ -115,9 +115,36 @@ while True:
         length = len(contours)
         print(contours)
 
+        # defects = cv2.convexityDefects(contours, hull)
+
         if length > 2:
+            hull = cv2.convexHull(contours, returnPoints=False)
+            defects = cv2.convexityDefects(contours, hull)
             cv2.drawContours(roi_copy, contours, -1, (255, 255, 0), 2)
-        
+            if defects is not None:
+                cnt = 0
+                for i in range(defects.shape[0]):
+                    s, e, f, d = defects[i][0]
+
+                    start = tuple(contours[s][0])
+                    end = tuple(contours[e][0])
+                    far = tuple(contours[f][0])
+
+                    a = np.sqrt( (end[0] - start[0]) ** 2 + (end[1] - start[1]) ** 2)
+                    b = np.sqrt( (far[0] - start[0]) ** 2 + (far[1] - start[1]) ** 2)
+                    c = np.sqrt( (end[0] - far[0]) ** 2 + (end[1] - far[1]) ** 2)
+
+                    angle = np.arccos( (b ** 2 + c ** 2 - a ** 2) / (2 * b * c))
+
+                    if angle <= np.pi / 2:
+                        cnt += 1
+                        cv2.circle(roi_copy, far, 4, [0, 0, 255], -1)
+                
+                if cnt > 0:
+                    cnt = cnt + 1
+                    
+
+
         else:
             print("Re-Select The ROI Area")
 
