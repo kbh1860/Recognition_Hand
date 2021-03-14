@@ -116,11 +116,12 @@ while True:
         print(contours)
 
         if length > 2:
-            cv2.drawContours(frame, contours, -1, (255, 255, 0), 2)
+            cv2.drawContours(roi_copy, contours, -1, (255, 255, 0), 2)
         
         else:
             print("Re-Select The ROI Area")
 
+        frame[start_y: end_y, start_x: end_x] = roi_copy
         # cv2.imshow("ROI", ROI)
         cv2.imshow("HSV", skinRecognitionHSV)
         # cv2.imshow("blur", blurred)
